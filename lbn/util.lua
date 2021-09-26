@@ -48,9 +48,13 @@ function util.format_value(value)
 	elseif util.is_table(value) then
 		return util.format_table(value)
 	elseif type(value) == "string" then
-		return ('"%s"'):format(tostring(value))
-	else
+		return '"' .. value:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("\t", "\\t") .. '"'
+	elseif type(value) == "function" then
+		return '"(function)"'
+	elseif type(value) == "number" or type(value) == "boolean" then
 		return tostring(value)
+	else
+		assert(false, ("Unable to format %s: Unknown type"):format(type(value)))
 	end
 end
 
@@ -63,7 +67,7 @@ function util.format_table(tbl)
 	local cur_idx = 0
 	local tbl_len = util.table_len(tbl)
 	for key, value in pairs(tbl) do
-		s = s .. util.format_value(key)
+		s = s .. "[" .. util.format_value(key) .. "]"
 		s = s .. " = "
 		s = s .. util.format_value(value)
 
