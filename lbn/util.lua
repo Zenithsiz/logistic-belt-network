@@ -117,7 +117,7 @@ function util.table_map(tbl, f)
 
 	local output = {}
 	for key, value in pairs(tbl) do
-		key, value = f(key, value)
+		local key, value = f(key, value)
 		output[key] = value
 	end
 	return output
@@ -129,6 +129,23 @@ function util.table_map_values(tbl, f)
 
 	return util.table_map(tbl, function(key, value)
 		return key, f(value)
+	end)
+end
+
+-- Maps an array
+function util.array_map(tbl, f)
+	util.assert_array(tbl)
+
+	return util.table_map_values(tbl, f)
+end
+
+-- Maps an array into a table
+function util.array_map_table(tbl, f)
+	util.assert_array(tbl)
+
+	return util.table_map(tbl, function(_, value)
+		local key, value = f(value)
+		return key, value
 	end)
 end
 
