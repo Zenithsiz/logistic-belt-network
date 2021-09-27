@@ -51,7 +51,7 @@ function util.format_value(value)
 		return '"' .. value:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("\t", "\\t") .. '"'
 	elseif type(value) == "function" then
 		return '"(function)"'
-	elseif type(value) == "number" or type(value) == "boolean" then
+	elseif type(value) == "number" or type(value) == "boolean" or type(value) == "nil" then
 		return tostring(value)
 	else
 		assert(false, ("Unable to format %s: Unknown type"):format(type(value)))
@@ -160,6 +160,17 @@ function util.table_values(tbl)
 	local output = {}
 	for _, value in pairs(tbl) do
 		table.insert(output, value)
+	end
+	return output
+end
+
+-- Returns all keys of a table as an array
+function util.table_keys(tbl)
+	util.assert_table(tbl)
+
+	local output = {}
+	for key, _ in pairs(tbl) do
+		table.insert(output, key)
 	end
 	return output
 end
