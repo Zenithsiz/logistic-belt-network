@@ -1,0 +1,17 @@
+{
+	"Lua.diagnostics.globals": [
+		"mods",
+		"table_size",
+		"log",
+		"localised_print",
+		"serpent",
+		"global",
+		"__DebugAdapter",
+		"__Profiler",
+		"data"
+	],
+	"Lua.runtime.version": "Lua 5.2",
+	"Lua.workspace.library": [
+		".vscode/factorio"
+	]
+}
