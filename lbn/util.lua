@@ -1,13 +1,18 @@
--- Utilities
+---Utilities
+
+local data_util = require("__flib__.data-util")
 
 local util = {}
 
--- Returns if `tbl` is a table
+---Returns if `tbl` is a table
+---@param tbl any
+---@return boolean
 function util.is_table(tbl)
 	return type(tbl) == "table"
 end
 
--- Asserts `tbl` is a table
+---Asserts `tbl` is a table
+---@param tbl any
 function util.assert_table(tbl)
 	-- Note: Needs to be done like this due to no lazily evaluation
 	if not util.is_table(tbl) then
@@ -16,8 +21,10 @@ function util.assert_table(tbl)
 	end
 end
 
--- Returns if `tbl` is an array
--- Adapted from `https://stackoverflow.com/questions/7526223`
+---Returns if `tbl` is an array
+---Adapted from `https://stackoverflow.com/questions/7526223`
+---@param tbl any
+---@return boolean
 function util.is_array(tbl)
 	-- If it isn't a table, it isn't an array
 	if not util.is_table(tbl) then
@@ -32,7 +39,8 @@ function util.is_array(tbl)
 	end
 end
 
--- Asserts `tbl` is an array
+---Asserts `tbl` is an array
+---@param arr any
 function util.assert_array(arr)
 	-- Note: Needs to be done like this due to no lazily evaluation
 	if not util.is_array(arr) then
@@ -41,7 +49,9 @@ function util.assert_array(arr)
 	end
 end
 
--- Formats a value
+---Formats a value
+---@param value any
+---@return string
 function util.format_value(value)
 	if util.is_array(value) then
 		return util.format_array(value)
@@ -55,10 +65,14 @@ function util.format_value(value)
 		return tostring(value)
 	else
 		assert(false, ("Unable to format %s: Unknown type"):format(type(value)))
+		-- Note: We asserted false, so we won't get to here
+		---@diagnostic disable-next-line: missing-return
 	end
 end
 
--- Formats a table
+---Formats a table
+---@param tbl table
+---@return string
 function util.format_table(tbl)
 	util.assert_table(tbl)
 
@@ -84,7 +98,10 @@ function util.format_table(tbl)
 	return s
 end
 
--- Formats an array
+---Formats an array
+---@generic T
+---@param arr T[]
+---@return string
 function util.format_array(arr)
 	util.assert_array(arr)
 
@@ -104,7 +121,9 @@ function util.format_array(arr)
 	return s
 end
 
--- Returns the number of entries in a table
+---Returns the number of entries in a table
+---@param tbl table
+---@return integer
 function util.table_len(tbl)
 	util.assert_table(tbl)
 
@@ -115,7 +134,11 @@ function util.table_len(tbl)
 	return count
 end
 
--- Maps all keys and values in a table
+---Maps all keys and values in a table
+---@generic K, V, K2, V2
+---@param tbl table<K, V>
+---@param f fun(key:K, value:V): K2, V2
+---@return table<K2, V2>
 function util.table_map(tbl, f)
 	util.assert_table(tbl)
 
@@ -127,7 +150,11 @@ function util.table_map(tbl, f)
 	return output
 end
 
--- Maps all values in a table
+---Maps all values in a table
+---@generic K, T, U
+---@param tbl table<K, T>
+---@param f fun(value: T): U
+---@return table<K, U>
 function util.table_map_values(tbl, f)
 	util.assert_table(tbl)
 
@@ -136,14 +163,22 @@ function util.table_map_values(tbl, f)
 	end)
 end
 
--- Maps an array
+---Maps an array
+---@generic T, U
+---@param tbl T[]
+---@param f fun(value: T): U
+---@return U[]
 function util.array_map(tbl, f)
 	util.assert_array(tbl)
 
 	return util.table_map_values(tbl, f)
 end
 
--- Maps an array into a table
+---Maps an array into a table
+---@generic T, K, U
+---@param tbl T[]
+---@param f fun(value: T): K, U
+---@return table<K, U>
 function util.array_map_table(tbl, f)
 	util.assert_array(tbl)
 
@@ -153,7 +188,10 @@ function util.array_map_table(tbl, f)
 	end)
 end
 
--- Returns all values of a table as an array
+---Returns all values of a table as an array
+---@generic K, V
+---@param tbl table<K, V>
+---@return V[]
 function util.table_values(tbl)
 	util.assert_table(tbl)
 
@@ -164,7 +202,10 @@ function util.table_values(tbl)
 	return output
 end
 
--- Returns all keys of a table as an array
+---Returns all keys of a table as an array
+---@generic K, V
+---@param tbl table<K, V>
+---@return K[]
 function util.table_keys(tbl)
 	util.assert_table(tbl)
 
@@ -175,13 +216,16 @@ function util.table_keys(tbl)
 	return output
 end
 
--- Flattens an array of arrays
+---Flattens an array of arrays
+---@generic T
+---@param arr T[][]
+---@return T[]
 function util.array_flatten(arr)
 	util.assert_array(arr)
 
 	local output = {}
 	for _, sub_arr in ipairs(arr) do
-		assert(util.is_array(sub_arr))
+		util.assert_array(sub_arr)
 
 		for _, value in ipairs(sub_arr) do
 			table.insert(output, value)
